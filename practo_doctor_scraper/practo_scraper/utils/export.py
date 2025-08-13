@@ -23,20 +23,36 @@ def get_all_doctors_from_db(db_uri):
     doctors = []
     try:
         for doctor in session.query(Doctor).all():
+            # Safely parse JSON fields
+            try:
+                clinics = json.loads(doctor.clinics) if doctor.clinics else []
+            except (json.JSONDecodeError, ValueError):
+                clinics = []
+                
+            try:
+                services = json.loads(doctor.services) if doctor.services else []
+            except (json.JSONDecodeError, ValueError):
+                services = []
+                
+            try:
+                availability = json.loads(doctor.availability) if doctor.availability else {}
+            except (json.JSONDecodeError, ValueError):
+                availability = {}
+            
             doc_dict = {
                 'name': doctor.name,
                 'specialization': doctor.specialization,
                 'experience': doctor.experience,
                 'qualifications': doctor.qualifications,
-                'clinics': json.loads(doctor.clinics) if doctor.clinics else [],
+                'clinics': clinics,
                 'fees': doctor.fees,
                 'rating': doctor.rating,
                 'reviews_count': doctor.reviews_count,
-                'services': json.loads(doctor.services) if doctor.services else [],
+                'services': services,
                 'address': doctor.address,
                 'google_maps_link': doctor.google_maps_link,
                 'phone': doctor.phone,
-                'availability': json.loads(doctor.availability) if doctor.availability else {},
+                'availability': availability,
                 'profile_url': doctor.profile_url,
                 'image_url': doctor.image_url
             }

@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.env
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Scrapy
+*.log
+httpcache/
+.scrapy/
+
+# Data files
+*.csv
+*.json
+*.db
+*.sqlite
+*.sqlite3
+
+# Playwright browsers
+.playwright/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.db

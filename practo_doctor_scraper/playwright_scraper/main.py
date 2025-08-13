@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from practo_scraper.utils.database import Base, Doctor, create_tables
-from doctor_scraper import DoctorScraper
+from .doctor_scraper import DoctorScraper
 
 DATABASE_URI = 'sqlite:///doctors_data.db'
 
@@ -35,9 +35,11 @@ async def get_bangalore_doctor_urls_from_sitemap():
     # Extract URLs that contain 'bangalore'
     bangalore_urls = []
     for url_elem in root.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}url'):
-        loc = url_elem.find('{http://www.sitemaps.org/schemas/sitemap/0.9}loc').text
-        if 'bangalore' in loc.lower() and '/doctor/' in loc.lower():
-            bangalore_urls.append(loc)
+        loc_elem = url_elem.find('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')
+        if loc_elem is not None and loc_elem.text:
+            loc = loc_elem.text
+            if 'bangalore' in loc.lower() and '/doctor/' in loc.lower():
+                bangalore_urls.append(loc)
     
     print(f"Found {len(bangalore_urls)} doctor URLs for Bangalore")
     return bangalore_urls

@@ -12,7 +12,7 @@ class DoctorSitemapSpider(SitemapSpider):
     ]
 
     def parse_doctor_profile(self, response):
-        # Delegate the actual parsing to doctor_spider.py
-        from practo_scraper.spiders.doctor_spider import DoctorSpider
+        # Delegate the actual parsing to doctors_spider.py
+        from .doctors_spider import DoctorSpider
         doctor_spider = DoctorSpider()
         yield from doctor_spider.parse(response)

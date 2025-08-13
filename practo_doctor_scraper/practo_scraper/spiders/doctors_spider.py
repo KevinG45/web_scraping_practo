@@ -38,7 +38,8 @@ class DoctorSpider(scrapy.Spider):
         # Experience
         experience = response.css('div.experience::text').get()
         if experience:
-            item['experience'] = re.search(r'(\d+)', experience).group(1) if re.search(r'(\d+)', experience) else ''
+            experience_match = re.search(r'(\d+)', experience)
+            item['experience'] = experience_match.group(1) if experience_match else ''
         else:
             item['experience'] = ''
         
@@ -84,7 +85,10 @@ class DoctorSpider(scrapy.Spider):
         
         # Rating and reviews
         rating_text = response.css('span.common__star-rating__value::text').get('')
-        item['rating'] = float(rating_text) if rating_text.strip() else 0.0
+        try:
+            item['rating'] = float(rating_text.strip()) if rating_text.strip() else 0.0
+        except ValueError:
+            item['rating'] = 0.0
         
         reviews_text = response.css('span.u-bold::text').get('')
         if reviews_text:

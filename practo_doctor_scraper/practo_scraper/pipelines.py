@@ -50,20 +50,37 @@ class DatabasePipeline:
 
     def process_item(self, item, spider):
         session = self.Session()
+        
+        # Safely serialize JSON fields
+        try:
+            clinics_json = json.dumps(item.get('clinics', []))
+        except (TypeError, ValueError):
+            clinics_json = '[]'
+            
+        try:
+            services_json = json.dumps(item.get('services', []))
+        except (TypeError, ValueError):
+            services_json = '[]'
+            
+        try:
+            availability_json = json.dumps(item.get('availability', {}))
+        except (TypeError, ValueError):
+            availability_json = '{}'
+        
         doctor = Doctor(
             name=item.get('name', ''),
             specialization=item.get('specialization', ''),
             experience=item.get('experience', ''),
             qualifications=item.get('qualifications', ''),
-            clinics=json.dumps(item.get('clinics', [])),
+            clinics=clinics_json,
             fees=item.get('fees', ''),
             rating=item.get('rating', 0.0),
             reviews_count=item.get('reviews_count', 0),
-            services=json.dumps(item.get('services', [])),
+            services=services_json,
             address=item.get('address', ''),
             google_maps_link=item.get('google_maps_link', ''),
             phone=item.get('phone', ''),
-            availability=json.dumps(item.get('availability', {})),
+            availability=availability_json,
             profile_url=item.get('profile_url', ''),
             image_url=item.get('image_url', '')
         )

@@ -45,10 +45,38 @@ def run_scrapy_spider():
         print(f"❌ Error running Scrapy spider: {e}")
         return False
 
+def run_api_scraper():
+    """Run the new EasyAPI-based scraper"""
+    print("\n" + "=" * 50)
+    print("Phase 2: Running EasyAPI-based scraper...")
+    print("=" * 50)
+    
+    try:
+        # Import and run the API scraper
+        from api_scraper.main import PractoAPIScraper
+        from api_scraper.mock_api import patch_api_client_for_testing
+        
+        # Use mock API for testing (remove this line when using real API)
+        print("⚠️ Using mock API for testing. Remove this for production.")
+        patch_api_client_for_testing()
+        
+        # Initialize and run scraper
+        scraper = PractoAPIScraper()
+        scraper.run_full_scrape(city="bangalore", limit=20, save_to_db=True)
+        
+        print("✓ API scraper completed successfully!")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error running API scraper: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
 def run_playwright_scraper():
     """Run the Playwright scraper for detailed data extraction"""
     print("\n" + "=" * 50)
-    print("Phase 2: Running Playwright scraper for detailed extraction...")
+    print("Phase 3: Running Playwright scraper for detailed extraction...")
     print("=" * 50)
     
     try:
@@ -110,12 +138,15 @@ def run_playwright_scraper():
         return False
 
 def main():
-    """Main function to run both scrapers"""
-    print("Practo Doctor Scraper - Running Both Scrapy and Playwright")
+    """Main function to run all scrapers"""
+    print("Practo Doctor Scraper - Running Scrapy, API, and Playwright")
     print("=" * 60)
     
     # Run Scrapy spider first
     scrapy_success = run_scrapy_spider()
+    
+    # Run new API scraper
+    api_success = run_api_scraper()
     
     # Run Playwright scraper
     playwright_success = run_playwright_scraper()
@@ -125,16 +156,19 @@ def main():
     print("FINAL RESULTS:")
     print("=" * 60)
     print(f"Scrapy Spider: {'✓ SUCCESS' if scrapy_success else '❌ FAILED'}")
+    print(f"API Scraper: {'✓ SUCCESS' if api_success else '❌ FAILED'}")
     print(f"Playwright Scraper: {'✓ SUCCESS' if playwright_success else '❌ FAILED'}")
     
-    if scrapy_success and playwright_success:
-        print("🎉 Both scrapers completed successfully!")
+    success_count = sum([scrapy_success, api_success, playwright_success])
+    
+    if success_count == 3:
+        print("🎉 All scrapers completed successfully!")
         return 0
-    elif scrapy_success or playwright_success:
-        print("⚠️ One scraper completed successfully, one failed")
+    elif success_count >= 1:
+        print(f"⚠️ {success_count}/3 scrapers completed successfully")
         return 1
     else:
-        print("❌ Both scrapers failed")
+        print("❌ All scrapers failed")
         return 2
 
 if __name__ == "__main__":
